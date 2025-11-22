@@ -1,3 +1,9 @@
+const cells = document.querySelectorAll('.cell');
+const startButton = document.('')
+
+
+
+
 const gameBoard = (function() {
   let board = Array(9).fill(null);
 

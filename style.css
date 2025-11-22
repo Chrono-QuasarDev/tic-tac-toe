@@ -1,0 +1,100 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(145deg, #dfe9f3, #ffffff);
+}
+
+.game-container {
+  width: 420px;
+  padding: 25px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.65);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #2d4059;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Player Input Fields */
+.inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.inputs input {
+  width: 48%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #f0f4f8;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.08);
+  transition: .2s ease;
+}
+
+.inputs input:focus {
+  background: white;
+  box-shadow: 0 0 8px rgba(66,135,245,0.5);
+}
+
+/* Status Panel */
+.status-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.status {
+  background: rgba(255,255,255,0.8);
+  padding: 12px;
+  font-size: 1.1rem;
+  color: #334;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Board Layout */
+.board {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.cell {
+  height: 110px;
+  background: white;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2d8cf0;
+  cursor: pointer;
+
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  transition: .25s ease;
+}
+
+.cell:hover {
+  scale: 1.1;
+}
