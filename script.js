@@ -62,12 +62,32 @@ const gameController = (function() {
   let winner = null;
   let players = [];
 
-  function startGame(player1, player2) {
+  function startGame() {
+    const getPlayer1El = document.getElementById("player1");
+    const getPlayer2El = document.getElementById("player2");
+    const showCurrentPlayer = document.getElementById("current-player");
+    const gameStatus = document.getElementById("game-status");
+
+    const name1 = getPlayer1El.value.trim();
+    const name2 = getPlayer2El.value.trim();
+
+    if (!name1 || !name2) {
+      alert("Please enter both player names");
+      return;
+    } 
+    
+    const player1 = player(name1, "X");
+    const player2 = player(name2, "O");
+
     players = [player1, player2];
     currentPlayer = players[0];
-    isGameOver = false;
-    winner = null;
-    console.log(`Game started. Current player: ${currentPlayer.name} (${currentPlayer.marker})`);
+    showCurrentPlayer.textContent = currentPlayer.name;
+    gameStatus.textContent = "Game start!";
+    isGameOver= false;
+    winner = false;
+    gameBoard.resetBoard();
+
+    displayController.render(gameBoard.getBoard());
   }
 
   function checkWinner() {
@@ -142,16 +162,11 @@ const gameController = (function() {
   return { startGame, playTurn }
 })();
 
-const player1 = player("Quasar", "X");
-const player2 = player("HaxTech", "O");
-gameController.startGame(player1, player2);
-// gameController.playTurn(0);
-// gameController.playTurn(1);
-// gameController.playTurn(2);
-// gameController.playTurn(3);
-// gameController.playTurn(4);
-// gameController.playTurn(5);
-// gameController.playTurn(6);
-// gameController.playTurn(7);
-// gameController.playTurn(8);
-// gameController.playTurn(8);
+const UIEvents = (() => {
+  document.getElementById("start").addEventListener("click", () => {
+    gameController.startGame();
+  })
+})();
+
+
+
