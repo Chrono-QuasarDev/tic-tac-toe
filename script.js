@@ -1,5 +1,6 @@
 const gameBoard = (function() {
   let board = Array(9).fill(null);
+  //let board = ["X", "O", "X", "O", "X", "O", "X", "O", "X"]
 
   function getBoard() { return board };
   function setMark(index, mark) {
@@ -30,6 +31,30 @@ function player(name, marker) {
   return { name, marker }
 }
 
+// Module to display the game on the page and allow user to add marks to the board
+const displayController = (() => {
+  const boardContainer = document.getElementById("board");
+
+  const render = (board) => {
+    boardContainer.innerHTML = "";
+
+    board.forEach((cell, index) => {
+      const cellEl = document.createElement("div");
+      cellEl.classList.add("cell");
+      cellEl.textContent = cell;
+      
+      cellEl.addEventListener("click", (event) => {
+        gameController.playTurn(index);
+      });
+      boardContainer.appendChild(cellEl);
+    });
+  }
+
+  return { render };
+})();
+
+displayController.render(gameBoard.getBoard());
+console.log(gameBoard.getBoard());
 
 const gameController = (function() {
   let currentPlayer = null;
@@ -84,7 +109,8 @@ const gameController = (function() {
     }
     
     const setMarkResult = gameBoard.setMark(index, currentPlayer.marker);
-    console.log(setMarkResult);
+    displayController.render(gameBoard.getBoard());
+
     if (setMarkResult !== true) {
       console.log("Invalid move:", setMarkResult)
     }
@@ -119,13 +145,13 @@ const gameController = (function() {
 const player1 = player("Quasar", "X");
 const player2 = player("HaxTech", "O");
 gameController.startGame(player1, player2);
-gameController.playTurn(0);
-gameController.playTurn(1);
-gameController.playTurn(2);
-gameController.playTurn(3);
-gameController.playTurn(4);
-gameController.playTurn(5);
-gameController.playTurn(6);
-gameController.playTurn(7);
-gameController.playTurn(8);
-gameController.playTurn(8);
+// gameController.playTurn(0);
+// gameController.playTurn(1);
+// gameController.playTurn(2);
+// gameController.playTurn(3);
+// gameController.playTurn(4);
+// gameController.playTurn(5);
+// gameController.playTurn(6);
+// gameController.playTurn(7);
+// gameController.playTurn(8);
+// gameController.playTurn(8);
