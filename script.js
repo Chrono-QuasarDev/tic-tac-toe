@@ -34,6 +34,8 @@ function player(name, marker) {
 // Module to display the game on the page and allow user to add marks to the board
 const displayController = (() => {
   const boardContainer = document.getElementById("board");
+  const currentPlayerEl = document.getElementById("current-player");
+  const gameStatusEl = document.getElementById("game-status");
 
   const render = (board) => {
     boardContainer.innerHTML = "";
@@ -50,7 +52,12 @@ const displayController = (() => {
     });
   }
 
-  return { render };
+  const updateStatus = (playerName, statusText) => {
+    currentPlayerEl.textContent = playerName || "--";
+    gameStatusEl.textContent = statusText;
+  }
+
+  return { render, updateStatus };
 })();
 
 displayController.render(gameBoard.getBoard());
@@ -65,8 +72,6 @@ const gameController = (function() {
   function startGame() {
     const getPlayer1El = document.getElementById("player1");
     const getPlayer2El = document.getElementById("player2");
-    const showCurrentPlayer = document.getElementById("current-player");
-    const gameStatus = document.getElementById("game-status");
 
     const name1 = getPlayer1El.value.trim();
     const name2 = getPlayer2El.value.trim();
@@ -81,13 +86,26 @@ const gameController = (function() {
 
     players = [player1, player2];
     currentPlayer = players[0];
-    showCurrentPlayer.textContent = currentPlayer.name;
-    gameStatus.textContent = "Game start!";
     isGameOver= false;
     winner = false;
     gameBoard.resetBoard();
 
     displayController.render(gameBoard.getBoard());
+    displayController.updateStatus(currentPlayer.name, "Game start!");
+  }
+
+  function restartGame() {
+    gameBoard.resetBoard();
+    currentPlayer = null;
+    players = [];
+    isGameOver = false;
+    winner = null;
+    
+    document.getElementById("player1").value = "";
+    document.getElementById("player2").value = "";
+
+    displayController.render(gameBoard.getBoard());
+    displayController.updateStatus("--", "Ready");
   }
 
   function checkWinner() {
@@ -159,13 +177,17 @@ const gameController = (function() {
     }
   }
 
-  return { startGame, playTurn }
+  return { startGame, playTurn, restartGame }
 })();
 
 const UIEvents = (() => {
   document.getElementById("start").addEventListener("click", () => {
     gameController.startGame();
-  })
+  });
+
+  document.getElementById("restart").addEventListener("click", () => {
+    gameController.restartGame();
+  });
 })();
 
 
