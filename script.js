@@ -57,7 +57,15 @@ const displayController = (() => {
     gameStatusEl.textContent = statusText;
   }
 
-  return { render, updateStatus };
+  const blinkWinningCells = (pattern) => {
+    const cells = boardContainer.querySelectorAll(".cell");
+    pattern.forEach(index => {
+      const cell = cells[index];
+      cell.classList.add("blink");
+    })
+  }
+
+  return { render, updateStatus, blinkWinningCells };
 })();
 
 displayController.render(gameBoard.getBoard());
@@ -106,37 +114,30 @@ const gameController = (function() {
 
     displayController.render(gameBoard.getBoard());
     displayController.updateStatus("--", "Ready");
+
+    // Optionally remove any lingering blink classes
+    document.querySelectorAll(".cell.blink").forEach(el => el.classList.remove("blink"));
   }
 
   function checkWinner() {
     const board = gameBoard.getBoard();
     const winPatterns = [
-      [0, 1, 1],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
+      [0, 1, 2],[3, 4, 5],[6, 7, 8],
+      [0, 3, 6],[1, 4, 7],[2, 5, 8],
+      [0, 4, 8],[2, 4, 6],
     ];
 
     for (const pattern of winPatterns) {
       const [a, b, c] = pattern;    
-      
-      if (
-        board[a] !== null &&
-        board[a] === board[b] && 
-        board[b] === board[c]
-      ) {
-        gameBoard.resetBoard();
-        return board[a];
-      }
-
-      if (!board.includes(null)) {
-        return "Tie";
+      if (board[a] !== null && board[a] === board[b] && board[b] === board[c]) {
+        return { winner: board[a], pattern};
       }
     }
+    
+    if (!board.includes(null)) {
+      return { winner: "Tie", pattern: [] };
+    }
+
     return null;
   }
 
@@ -147,34 +148,38 @@ const gameController = (function() {
     }
     
     const setMarkResult = gameBoard.setMark(index, currentPlayer.marker);
-    displayController.render(gameBoard.getBoard());
-
+    
     if (setMarkResult !== true) {
-      console.log("Invalid move:", setMarkResult)
+      displayController.updateStatus(currentPlayer.name, "Invalid move");
+      return
     }
     
 
-    const result = checkWinner();
-    if (result === "Tie") {
-      console.log("It's a tie");
-      isGameOver = true;
-      return
-    }
+    displayController.render(gameBoard.getBoard());
 
-    if (result === currentPlayer.marker) {
-      console.log(`${currentPlayer.name} wins`);
-      isGameOver = true;
-      winner = currentPlayer;
+
+    const result = checkWinner();
+
+    if (result) {
+
+      const actualWinner = players.find(p => p.marker === result.winner);
+
+      if (result.winner === "Tie") {
+        displayController.updateStatus("--", "It's a tie");
+        isGameOver = true;
+      } else if (actualWinner) {
+        winner = actualWinner;
+        displayController.updateStatus(winner.name, `${winner.name} wins`);
+        displayController.blinkWinningCells(result.pattern);
+        isGameOver = true
+      }
       return;
     }
 
-    if (setMarkResult) {
-      currentPlayer = (currentPlayer === players[0] ? players[1] : players[0]);
-      console.log(`Board updated. Next player: ${currentPlayer.name} (${currentPlayer.marker})`);
-      console.log("Current Board:", gameBoard.getBoard());
-    } else {
-      console.log(`Turn failed for ${currentPlayer.name}: ${currentPlayer.marker}`);
-    }
+
+    currentPlayer = (currentPlayer === players[0] ? players[1] : players[0]);
+    console.log(`Board updated. Next player: ${currentPlayer.name} (${currentPlayer.marker})`);
+    displayController.updateStatus(currentPlayer.name, "Ongoing");
   }
 
   return { startGame, playTurn, restartGame }
